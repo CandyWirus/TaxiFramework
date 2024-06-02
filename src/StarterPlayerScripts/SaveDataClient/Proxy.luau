@@ -1,7 +1,7 @@
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 
-local actor = player.PlayerScripts.SaveDataClient
+local actor = script.Parent
 
 local queryBindable = actor.Query
 local changedBindable = actor.FileChanged

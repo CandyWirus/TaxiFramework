@@ -6,14 +6,13 @@ local serverModules = ServerStorage.Modules
 local actor = script.Parent
 
 local template = require(serverModules.SaveFileTemplate)
-local DataManipulator = require(serverModules.SaveFileManipulator)
-local DataHelper = DataManipulator.GetFile
+local SaveFileManipulator = require(serverModules.SaveFileManipulator)
 
 local remote = ReplicatedStorage.Remotes.QuerySaveFile
 local bindable = actor.FileChanged
 
 remote.OnServerInvoke = function(player, iter, ...)
-    local store = DataHelper.WaitForWrapper(player)
+    local store = SaveFileManipulator.WaitForWrapper(player)
     if store then
 
 		if iter == false and select("#", ...) == 1 and ... == 1 then --Hard-coded edge case for the first entry of the save file. If, due to a developer oversight, this value is not accessible, all clients will get banned upon joining.
@@ -25,7 +24,7 @@ remote.OnServerInvoke = function(player, iter, ...)
         for _, key in {...} do
             local keyType = typeof(key)
             if keyType ~= "string" and keyType ~= "number" then
-                DataManipulator.Ban(store, "Exploiting", `QuerySaveFile: Got illegal key datatype: "{keyType}".`)
+                SaveFileManipulator.Ban(store, "Exploiting", `QuerySaveFile: Got illegal key datatype: "{keyType}".`)
                 return nil
             end
 
@@ -41,13 +40,13 @@ remote.OnServerInvoke = function(player, iter, ...)
                     if index then
                         local isLegal = index(currentValue, key)
                         if not isLegal then
-                            DataManipulator.Ban(store, "Exploiting", `QuerySaveFile: Illegal index operation.`)
+                            SaveFileManipulator.Ban(store, "Exploiting", `QuerySaveFile: Illegal index operation.`)
                         end
                     end
                 end
                 local nextTemplateValue = currentTemplateValue[key]
                 if key == generic then
-                    DataManipulator.Ban(store, "Exploiting", `QuerySaveFile: Attempt to index generic value: "{generic}".`)
+                    SaveFileManipulator.Ban(store, "Exploiting", `QuerySaveFile: Attempt to index generic value: "{generic}".`)
                 elseif nextTemplateValue then
                     currentTemplateValue = nextTemplateValue
                 elseif generic then
@@ -55,10 +54,10 @@ remote.OnServerInvoke = function(player, iter, ...)
                 end
                 currentValue = currentValue[key]
                 if currentValue == nil and generic then
-                    DataManipulator.Ban(store, "Exploiting", `QuerySaveFile: Attempt to query invalid generic: "{key}".`)
+                    SaveFileManipulator.Ban(store, "Exploiting", `QuerySaveFile: Attempt to query invalid generic: "{key}".`)
                 end
             else
-                DataManipulator.Ban(store, "Exploiting", `QuerySaveFile: Attempt to index a {currentTemplateType} like a table.`)
+                SaveFileManipulator.Ban(store, "Exploiting", `QuerySaveFile: Attempt to index a {currentTemplateType} like a table.`)
                 return nil
             end
         end
@@ -84,9 +83,9 @@ remote.OnServerInvoke = function(player, iter, ...)
                         return t
                     end
                 end
-                DataManipulator.Ban(store, "Exploiting", `QuerySaveFile: Illegal iter operation.`)
+                SaveFileManipulator.Ban(store, "Exploiting", `QuerySaveFile: Illegal iter operation.`)
             else
-                DataManipulator.Ban(store, "Exploiting", `QuerySaveFile: Attempt to iterate a "{valueType}" value.`)
+                SaveFileManipulator.Ban(store, "Exploiting", `QuerySaveFile: Attempt to iterate a "{valueType}" value.`)
             end
         end
 
@@ -105,7 +104,7 @@ local changedEvents = {}
 bindable.Event:Connect(function(...)
 	local args = {...}
 	local storeId = table.remove(args, 1)
-	local store = DataHelper.WaitForWrapper(storeId)
+	local store = SaveFileManipulator.WaitForWrapper(storeId)
 
 	if store then
 		local currentTemplateValue = template

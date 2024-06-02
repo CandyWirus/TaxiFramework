@@ -3,12 +3,13 @@ local HttpService = game:GetService("HttpService")
 local SharedTableRegistry = game:GetService("SharedTableRegistry")
 local ServerStorage = game:GetService("ServerStorage")
 
-local DataStore = require(ServerStorage.Modules.DataStore)
+local actor: Actor = script.Parent
+
+local DataStore = require(actor.DataStore)
 local createTableFromSharedTable = require(ServerStorage.Modules.ConvertSharedTableToTable)
 
 local DataManipulator = require(ServerStorage.Modules.SaveFileManipulator)
 
-local actor: Actor = script.Parent
 local template = require(ServerStorage.Modules.SaveFileTemplate)
 local saveSettings = require(actor.Settings)
 local bindable = actor.Echo

@@ -1,12 +1,54 @@
 local ServerScriptService = game:GetService("ServerScriptService")
+local SharedTableRegistry = game:GetService("SharedTableRegistry")
+local actor = script.Parent
+local saveManagerSettings = require(actor.Settings)
 
-local getDataStoreFromPlayer = require(script.GetDataStoreFromPlayer)
+local storeName = saveManagerSettings.StoreName
+local scope = saveManagerSettings.Scope
+local keyFormat = saveManagerSettings.KeyFormat
 
-local getDataStore = getDataStoreFromPlayer.GetDataStore
-local waitForDataStore = getDataStoreFromPlayer.WaitForDataStore
+local bindable = actor.Echo
+
+local string_format = string.format
+
+local baseId = `{storeName}/{scope}/`
+
+local sharedTable = SharedTableRegistry:GetSharedTable("SaveFiles")
 
 local changedBindable = ServerScriptService.SaveDataReplicator.FileChanged
-local unloadedBindable = ServerScriptService.SaveDataLoader.Unloaded
+local unloadedBindable = actor.Unloaded
+
+local getDataStore = function(player: Player | string)
+	local id
+	if typeof(player) == "Instance" then
+		local userId = player.UserId
+		id = baseId .. string_format(keyFormat, userId)
+	else
+		id = player
+	end
+
+	return sharedTable[id], id
+end
+
+local waitForDataStore = function(player: Player | string)
+	local found, foundId = getDataStore(player)
+	if found then
+		return found, foundId, "Success"
+	else
+		local stupidBindable = Instance.new("BindableEvent") --coroutine.yield does not work in remote/bindable function callbacks due to an incorrect network optimization implemented by Roblox, so we need to use stupid bindables instead
+		local connection
+		connection = bindable.Event:Connect(function(topic, id, response)
+			if topic == "ProfileLoaded" and id == foundId then
+				connection:Disconnect()
+				local store, newId = getDataStore(player)
+				stupidBindable:Fire(store, newId, response)
+			end
+		end)
+		bindable:Fire("WaitForProfile", player)
+		return stupidBindable.Event:Wait()
+	end
+end
+
 
 local metatable
 metatable = {
