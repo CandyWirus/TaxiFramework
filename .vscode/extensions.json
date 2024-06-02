@@ -1,0 +1,10 @@
+{
+    "recommendations": [
+        "Nightrains.robloxlsp",
+        "evaera.vscode-rojo"
+    ],
+
+    "unwantedRecommendations": [
+        "sumneko.lua"
+    ]
+}
