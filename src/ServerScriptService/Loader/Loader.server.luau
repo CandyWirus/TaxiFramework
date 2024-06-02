@@ -18,7 +18,7 @@ end
 
 local thread = coroutine.running()
 for _, v in ServerScriptService:GetChildren() do
-	if v:IsA("Actor") then
+	if v:IsA("Actor") and v ~= actor then
 		if not v:GetAttribute("Loaded") then
 			local connections = {}
 
