@@ -179,3 +179,5 @@ bindable.Event:ConnectParallel(function(topic, ...)
 		topicFunction(...)
 	end
 end)
+
+actor:SetAttribute("Loaded", true)

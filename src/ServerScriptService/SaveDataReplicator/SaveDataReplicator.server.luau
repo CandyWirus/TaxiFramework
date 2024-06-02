@@ -164,3 +164,5 @@ bindable.Event:Connect(function(...)
 		end
 	end
 end)
+
+actor:SetAttribute("Loaded", true)
