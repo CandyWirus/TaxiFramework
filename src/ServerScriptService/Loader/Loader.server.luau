@@ -12,10 +12,6 @@ local disconnectAll = function(connections)
 	table.clear(connections)
 end
 
-if not game:IsLoaded() then
-	game.Loaded:Wait()
-end
-
 local thread = coroutine.running()
 for _, v in ServerScriptService:GetChildren() do
 	if v:IsA("Actor") and v ~= actor then
