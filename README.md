@@ -7,6 +7,9 @@ Every component in your game should be an Actor, generally under ServerScriptSer
 ## Client Loader
 Taxi Framework includes a simple client loader that waits for all Actors in PlayerScripts to load before marking itself as loaded. By default, all it does is print when the game loads, specifying how long it took the game to load. The ReplicatedFirst.Loader.Callback ModuleScript runs instantly-before any Actors have loaded-upon joining the game, and returns a function to be called after all Actors have loaded. The recommended use case for ReplicatedFirst.Loader.Callback is for the developer to optionally add their own loading screen to the PlayerGui, optionally preload assets from the Roblox CDN, and then return a function that destroys the loading screen, if it was added, once the game has fully loaded. Note that the loader also ensures game:IsLoaded returns true before calling the callback. ReplicatedFirst.Loader has no Proxy.
 
+## Server Loader
+Taxi Framework includes a server loader nearly identical to the client loader. It is not as useful as the client loader but it will print the server's load time.
+
 ## DataStore System
 Taxi Framework includes a powerful DataStore system, based on Suphi's DataStore Module, that includes:
 - All Suphi's DataStore Module features, such as session locking.
