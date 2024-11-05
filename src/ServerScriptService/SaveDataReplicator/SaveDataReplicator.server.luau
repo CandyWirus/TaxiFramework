@@ -99,8 +99,6 @@ remote.OnServerInvoke = function(player, iter, ...)
     return nil
 end
 
-local changedEvents = {}
-
 bindable.Event:Connect(function(...)
 	local args = {...}
 	local storeId = table.remove(args, 1)
@@ -108,7 +106,6 @@ bindable.Event:Connect(function(...)
 
 	if store then
 		local currentTemplateValue = template
-		local currentChangedValue = changedEvents
 		local currentValue = store
 
 		local clientLegal = true
