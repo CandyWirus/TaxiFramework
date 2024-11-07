@@ -44,6 +44,25 @@ Players.PlayerAdded:Connect(function(player: Player)
 
 		local value = store.Value
 
+		local firstJoinTime = store.Metadata.FirstJoinTime
+		if not firstJoinTime then
+			local success = require(actor.OnFirstJoin)(store, player)
+			if success then
+				store.Metadata.FirstJoinTime = tick()
+				store.Metadata.Version = version
+			else
+				store:Close()
+
+				task.delay(10, function()
+					if store and store.State == false then
+						store:Destroy()
+					end
+				end)
+
+				return player:Kick(`Your save file could not be created at this time. Please try again later.`)
+			end
+		end
+
 		DataManipulator.Reconcile(value, template)
 
 		local storeSharedTable
